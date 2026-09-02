@@ -31,8 +31,7 @@ A savage Hinglish roast chatbot — swear at him and watch the rage climb. No AI
 ├── service-worker.js     # PWA offline caching
 ├── manifest.json         # Web App Manifest for PWA install
 ├── icon-192.png          # App icon (192x192)
-├── icon-512.png          # App icon (512x512)
-└── apple-touch-icon.png  # iOS home screen icon
+└── icon-512.png          # App icon (512x512)
 ```
 
 ## Getting Started

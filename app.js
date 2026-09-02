@@ -8,7 +8,7 @@ const HINDI = /\b(kya|kyu|kyun|hai|hain|tu|tum|tera|teri|tere|mera|meri|bhai|bha
 // the {3,} before the ending is what keeps "omega"/"bodega" out.
 const HINDI_SUF = /\b\w{3,}(ega|egi|enge|oge|unga|ungi|wala|wali|ayga|ayega|karna|karne|jana|dena|lena)\b/i;
 const HI_GAALI = /bhadw|bhosd|chinal|randi|lavd|lawd|lod[ae]|lund|gaand|gandu|chutiy|chut|chod|\bmc\b|\bbc\b|\bmkc\b|harami|kutt|kamin|saal[ae]|jhaat|jhant|tatti|nalayak|ullu|gadh[ae]|bewakoof|chomu|tharki|chapri|gawar|nikamma|besharam|bakchod|chirkut|tondu|dhakkan|pagal|bsdk|bkl|lkc|tmkc|bhenchod|behenchod|madarchod|mader|chotiy|chootiy|bhadv|bhosad|bhos|laud|lawad|lode|lodu|haramkhor|kutiy|kuttiy|gaandoo|gandoo|chutya|chutiap|chutiyap|jhatu|jhaatu|tati|bakch|nalaik|bewkuf|gadhe|\bgand\b|\bulu\b|chuchi|chuchey|tatte|\bgote\b|\bmuth\b|muthal|chusna|chodna|hilana/i;
-const EN_GAALI = /f+u+c+k|fck|fu+k+|ph+u*c*k|a+s+hole|\bass\b|bitch|bastard|dick|prick|twat|wanker|slut|shit|crap|piss|damn|moron|dumb|idiot|stupid|loser|bloody|clown|trash|creep|freak|\bpenis\b|\bcock\b|\bballs\b|\bnuts\b|anus|\bbutt\b|\bbum\b|boobs|\btits\b|nipple|vagina|pussy|horny|\bsex|porn|condom|masturbat|jerk off|blowjob|\bcum\b|orgasm|\bnude\b|naked|dildo|boner|erect|hump|randy/i;
+const EN_GAALI = /f+u+c+k|fck|fu+k+|ph+u*c*k|a+s+hole|\bass\b|\basshole\b|bitch|bastard|\bdick\b|dickhead|\bprick\b|twat|wanker|slut|shit|crap|piss|damn|moron|dumb|idiot|stupid|loser|bloody|clown|trash|creep|freak|\bpenis\b|\bcock\b|\bballs\b|\bnuts\b|\banus\b|\banal\b|\bbutt\b|\bbum\b|\bboob\b|\bboobs\b|\btits\b|nipple|\bvagina\b|\bpussy\b|\bhorny\b|\bsex|\bporn\b|pornhub|onlyfans|only fans|nsfw|condom|masturbat|jerk off|blowjob|\bcum\b|orgasm|\bnude\b|naked|dildo|\bboner\b|erect|hump|randy|\brape\b|rapist/i;
 const ANY_GAALI = new RegExp(HI_GAALI.source + "|" + EN_GAALI.source, "i");
 
 // ponytail: f*ck, ch#tiya, g@ndu, sh1t, bh@dwe. two cheap passes, no fuzzy-match library.
@@ -23,7 +23,8 @@ const skel = t => t.toLowerCase().replace(/ph/g, "f").replace(/[^a-z]/g, "").rep
 const CENSORED = /[*#@$%^&!0-9]/;
 const GAALI_WORDS = ["bhadwa","bhosdike","chinal","randi","lavda","lund","gaand","gandu","chutiya",
   "chut","chodu","bsdk","bkl","lkc","bhenchod","madarchod","harami","kutta","kamina","jhaatu","tatti","bewakoof","chapri","tharki","bakchod",
-  "fuck","asshole","bitch","bastard","shit","dick","stupid","idiot","loser","dumb"];
+  "fuck","asshole","bitch","bastard","shit","dick","dickhead","prick","stupid","idiot","loser","dumb",
+  "penis","cock","boobs","boob","tits","vagina","pussy","anus","anal","boner"];
 const SKELS = GAALI_WORDS.map(w => [skel(w), w]);
 
 // ponytail: pass 3 for plain misspellings - haraami, gaandoo, chuttiya, bhaadwe.
@@ -360,6 +361,37 @@ const RULES = [
 ]],
 
   // ---- his personality ----
+  [/onlyfans|pornhub|\bporn\b|nsfw|xvideos|xnxx|redtube|porntube|camgirl|cam ?girl|leaked|leak|nude video|explicit/i,
+    ["teri history check kar li maine 😈", "tereko ye sab dekh ke maza aata hai kya bhadwe? 💀",
+     "bhai subah subah ye dekh raha hai? doctor dikha chutiye 😂",
+     "tera browser history sab kuch bata raha hai gandu 💀", "onlyfans tera daily routine hai kya harami? 😈",
+     "teri aadatein bahut kharab hai chutiye, uth ke kaam kar 😂",
+     "bhai subscription le raha hai ya sirf preview dekh raha hai? 💀",
+     "tera phone memory full hai isliye slow chal raha hai lavde 😂",
+     "tharki no.1 tera record hai gandu, koi tod nahi sakta 😈",
+     "nashta kar le pehle, phir dekh lena ye sab chutiye 😂",
+     "ek kaam kar, padhai kar. ye sab baad mein dekh lena bhadwe 💀",
+     "teri aankhein kharab ho jayengi isse harami, phone rakh de 😂",
+     "bhai tereko normal cheezein dekhne ki aadat daal lavde 💀",
+     "tera dimaag isse kharab ho raha hai gandu 😈",
+     "download karega to memory full ho jayegi chutiye 😂",
+     "onlyfans pe paisa lag raha hai, wifi free hai lavde 💀"
+],
+    ["checked your history did I 😈", "you enjoy watching this stuff bhadwe? 💀",
+     "bro watching this first thing in the morning? see a doctor chutiye 😂",
+     "your browser history tells everything gandu 💀", "onlyfans is your daily routine harami? 😈",
+     "your habits are terrible chutiye, get up and do something 😂",
+     "subscribing or just watching previews? bhadwe 💀",
+     "your phone is slow because of this lavde 😂",
+     "certified tharki no.1, nobody can break your record gandu 😈",
+     "eat breakfast first, watch this later chutiye 😂",
+     "one thing, study first. watch all this later bhadwe 💀",
+     "your eyes will go bad from this harami, put the phone down 😂",
+     "bro you need to get into normal stuff lavde 💀",
+     "this is ruining your brain gandu 😈",
+     "if you download, your memory will be full chutiye 😂",
+     "onlyfans costs money, wifi is free lavde 💀"
+]],
   [/sutta|cigarette|cigrette|smoke|smoking|kash|marlboro|gold flake|classic|vape/i,
     ["ek sutta de bhai 🚬", "chal balcony chalte hai", "sutta hai to baat kar, warna kat le 😂",
      "abhi peeke aaya, ek aur chalega 🚬", "lighter tere paas hai? mereko pata tha nahi hoga 😂",
