@@ -205,8 +205,15 @@
   .cage i:nth-child(11){animation-delay:400ms} .cage i:nth-child(12){animation-delay:440ms}
   .cage i.lat{animation-delay:500ms}
   @keyframes ringIn{from{opacity:0;scale:.4}to{opacity:1;scale:1}}
-  #core{animation:coreIn .7s var(--ease-spring) .2s backwards}
-  @keyframes coreIn{from{opacity:0;transform:translateZ(46px) scale(.5) rotate(-25deg)}}
+  /* gate.css gives #core its orbit at ID specificity. `animation` is a shorthand,
+     so declaring it again here REPLACES the spin instead of adding to it - which
+     left the photo dead still while only its container moved.
+     Both have to be restated together. Same trap as #start above. */
+  #core{animation:coreIn .7s var(--ease-spring) .2s backwards,
+                  coin var(--spin) linear infinite}
+  /* coreIn must not touch transform any more - the coin spin owns it, and two
+     animations on one property means the last one silently wins. scale only. */
+  @keyframes coreIn{from{opacity:0;scale:.5}}
   .orbit{animation-delay:.6s}
 
   /* the ripple that fires out of the start button, from the exact point you hit */

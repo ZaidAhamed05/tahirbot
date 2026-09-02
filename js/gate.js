@@ -22,6 +22,7 @@
   const roll = list => list[Math.floor(Math.random() * list.length)];
 
   gimg.src = dp.src;
+  gimg2.src = dp.src;          // the coin's far face is the same photo
   gvisits.textContent = MEM.visits || 1;
   ggaali.textContent = MEM.gaalis || 0;
 

@@ -51,14 +51,19 @@
       <div class="orbit o1"><s></s></div>
       <div class="orbit o2"><s></s></div>
       <div class="orbit o3"><s></s></div>
-      <div class="heart"></div>
-      <!-- the track carries him around the sphere; he counter-spins inside it
-           so he always faces you. see the billboard note in gate.css. -->
+      <!-- Tahir as a solid 3D coin: two photo faces with real thickness between
+           them, spinning on its own axis. See the slab note in gate.css. -->
       <div id="track">
         <button id="core" type="button" title="poke him" aria-label="poke Tahir">
-          <img id="gimg" alt="">
-          <span class="sheen"></span>
-          <span class="lines"></span>
+          <span class="slab"></span><span class="slab"></span><span class="slab"></span>
+          <span class="slab"></span><span class="slab"></span><span class="slab"></span>
+          <span class="slab"></span><span class="slab"></span><span class="slab"></span>
+          <span class="face back"><img id="gimg2" alt="" aria-hidden="true"></span>
+          <span class="face front">
+            <img id="gimg" alt="">
+            <span class="sheen"></span>
+            <span class="lines"></span>
+          </span>
         </button>
       </div>
       <div class="cast"></div>
