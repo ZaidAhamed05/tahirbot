@@ -1,0 +1,95 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   CHATKIT — the things that make the chat worth staying in:
+   tap-to-send starter chips, emoji reactions, rage milestones, an unread pill.
+   Depends on the motion tokens from motion.css.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── starter chips: tap one to fire it straight at him ─────────────────────
+   the hardest moment in any chat app is the empty input. these remove it. */
+.starters{display:flex;gap:7px;padding:0 12px 8px;overflow-x:auto;flex:0 0 auto;
+          scrollbar-width:none;-webkit-overflow-scrolling:touch;
+          -webkit-mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 20px),transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 20px),transparent)}
+.starters::-webkit-scrollbar{display:none}
+.starters:empty{display:none}
+.starters b{flex:0 0 auto;font:inherit;font-size:12.5px;font-weight:500;cursor:pointer;
+            padding:7px 13px;border-radius:999px;white-space:nowrap;color:#c4b5fd;
+            background:rgba(124,58,237,.14);border:1px solid rgba(167,139,250,.32);
+            transition:transform var(--t-tap) var(--ease-spring),
+                       background var(--t-fast),color var(--t-fast),border-color var(--t-fast);
+            animation:chipIn .34s var(--ease-spring) backwards}
+@keyframes chipIn{from{opacity:0;transform:translateY(9px) scale(.85)}}
+.starters b:nth-child(1){animation-delay:0ms}   .starters b:nth-child(2){animation-delay:40ms}
+.starters b:nth-child(3){animation-delay:80ms}  .starters b:nth-child(4){animation-delay:120ms}
+.starters b:hover{background:rgba(124,58,237,.3);color:#fff;border-color:var(--secondary);
+                  transform:translateY(-2px)}
+.starters b:active{transform:scale(.92)}
+.starters b:focus-visible{outline:2px solid var(--secondary);outline-offset:2px}
+body.mad .starters b{color:#fca5a5;background:rgba(239,68,68,.14);border-color:rgba(239,68,68,.35)}
+body.mad .starters b:hover{background:rgba(239,68,68,.3);color:#fff;border-color:#ef4444}
+
+/* ── double-tap one of his lines to stamp a reaction on it ───────────────── */
+.msg{position:relative}
+.rx{position:absolute;right:-4px;bottom:-11px;font-size:15px;line-height:1;
+    padding:2px 5px;border-radius:999px;background:#1a1a26;border:1px solid #35354b;
+    pointer-events:none;animation:rxIn .42s var(--ease-spring) backwards;z-index:2}
+@keyframes rxIn{from{opacity:0;transform:scale(0) rotate(-40deg) translateY(8px)}}
+/* the reaction that flies up off the bubble when you stamp it */
+.rxfly{position:fixed;pointer-events:none;z-index:40;font-size:26px;
+       animation:rxfly .9s var(--ease-out) forwards}
+@keyframes rxfly{to{transform:translateY(-72px) scale(1.7) rotate(14deg);opacity:0}}
+
+/* ── rage milestones: a banner that drops in when he hits a new level ────── */
+.tier{position:absolute;left:50%;top:8px;translate:-50% 0;z-index:12;
+      display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;
+      font-family:var(--display);font-size:12px;letter-spacing:.1em;white-space:nowrap;
+      color:#fff;background:linear-gradient(135deg,var(--primary),var(--accent));
+      box-shadow:0 12px 30px -8px rgba(244,63,94,.7),0 0 0 1px rgba(255,255,255,.16) inset;
+      animation:tierIn 2.6s var(--ease-spring) forwards}
+.tier em{font-style:normal;font-size:15px}
+@keyframes tierIn{
+  0%{opacity:0;transform:translateY(-26px) scale(.8)}
+  12%,78%{opacity:1;transform:translateY(0) scale(1)}
+  100%{opacity:0;transform:translateY(-16px) scale(.94)}}
+
+/* ── jump-to-latest, with a count of what you scrolled past ──────────────── */
+.jump{position:absolute;right:16px;bottom:76px;z-index:11;display:flex;align-items:center;
+      gap:6px;padding:8px 14px;border-radius:999px;cursor:pointer;font:inherit;font-size:12.5px;
+      color:#fff;border:1px solid rgba(167,139,250,.4);background:rgba(30,28,53,.92);
+      -webkit-backdrop-filter:blur(var(--blur));backdrop-filter:blur(var(--blur));
+      box-shadow:0 10px 26px -10px #000;
+      opacity:0;transform:translateY(10px) scale(.9);pointer-events:none;
+      transition:opacity var(--t-base),transform var(--t-base) var(--ease-spring)}
+.jump.on{opacity:1;transform:none;pointer-events:auto}
+.jump:hover{border-color:var(--secondary)}
+.jump:active{transform:scale(.93)}
+.jump:focus-visible{outline:2px solid var(--secondary);outline-offset:2px}
+.jump u{text-decoration:none;min-width:18px;height:18px;padding:0 5px;border-radius:9px;
+        display:grid;place-items:center;font-size:11px;font-weight:700;
+        background:var(--accent);color:#fff}
+.jump u:empty{display:none}
+.jump i{font-style:normal;animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateY(3px)}}
+
+@media(prefers-reduced-motion:reduce){
+  .starters b,.rx,.tier,.jump i{animation:none !important}
+  .rxfly{display:none}
+}
+
+/* ── responsive ────────────────────────────────────────────────────────────── */
+@media(max-width:420px){
+  .starters{padding:0 10px 7px;gap:6px}
+  .starters b{font-size:12px;padding:6px 11px}
+  .jump{right:12px;bottom:110px;font-size:12px;padding:7px 12px}
+  .tier{font-size:11px;padding:7px 13px;max-width:calc(100% - 24px)}
+}
+/* landscape phone: the chips eat the only row of chat left, so drop them */
+@media(max-height:520px) and (orientation:landscape){
+  .starters{display:none}
+  .jump{bottom:62px}
+}
+@media(min-width:760px){
+  .starters{padding:0 14px 9px}
+  .starters b{font-size:13px}
+  .jump{bottom:84px}
+}

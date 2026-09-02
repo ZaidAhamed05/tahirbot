@@ -5,13 +5,19 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bhadwa Tahir Bot</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon-192.png">
-<meta name="theme-color" content="#0d0d12">
+<link rel="icon" href="icons/icon-192.png">
+<meta name="theme-color" content="#0F0F23">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Bhadwa Tahir">
 <meta name="description" content="A savage Hinglish roast chatbot - swear at him and watch the rage climb.">
-<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Russo+One&display=swap">
+<link rel="stylesheet" href="css/style.css">   <!-- chat shell: header, bubbles, composer -->
+<link rel="stylesheet" href="css/gate.css">    <!-- welcome gate + the 3D rig -->
+<link rel="stylesheet" href="css/motion.css">  <!-- motion tokens, reactive bg, transitions -->
+<link rel="stylesheet" href="css/chatkit.css"> <!-- starter chips, reactions, milestones -->
 </head>
 <body>
 <!-- ponytail: one FIXED layer covers the whole screen AND shows through the panel,
@@ -23,8 +29,60 @@
   <u class="stars s1"></u><u class="stars s2"></u><u class="stars s3"></u>
   <u class="comet"></u>
 </div>
+<div class="shards" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div class="vig" aria-hidden="true"></div>
 <div class="bubbles" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div>
 <div class="rain" aria-hidden="true"><span>🖕</span><span>💀</span><span>😂</span><span>🚬</span><span>😈</span><span>🔥</span><span>🤌</span><span>👀</span></div>
+
+<!-- ================= WELCOME GATE — the 3D Tahir shrine ================= -->
+<!-- ponytail: this whole screen is ONE overlay. it never unmounts the chat behind it,
+     so pressing start is a pure opacity/transform swap - no re-render, no flash. -->
+<div id="gate">
+  <div class="gfx" aria-hidden="true"><u class="halo"></u><u class="scan"></u><u class="floor"></u></div>
+
+  <!-- the "4D" rig: a real CSS-3D wireframe cage that spins around a floating bust,
+       tilted live by mouse / gyro. no library, no WebGL, works offline. -->
+  <div id="stage" aria-hidden="true">
+    <div id="rig">
+      <div class="cage">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        <i class="lat a"></i><i class="lat b"></i><i class="lat c"></i>
+      </div>
+      <div class="orbit o1"><s></s></div>
+      <div class="orbit o2"><s></s></div>
+      <div class="orbit o3"><s></s></div>
+      <div class="heart"></div>
+      <!-- the track carries him around the sphere; he counter-spins inside it
+           so he always faces you. see the billboard note in gate.css. -->
+      <div id="track">
+        <button id="core" type="button" title="poke him" aria-label="poke Tahir">
+          <img id="gimg" alt="">
+          <span class="sheen"></span>
+          <span class="lines"></span>
+        </button>
+      </div>
+      <div class="cast"></div>
+    </div>
+    <p id="poke"></p>
+  </div>
+
+  <div class="gcopy">
+    <p class="eyebrow"><b></b><span id="gbadge">BAKCHODI ENGINE v2 &middot; NSFW &middot; 0% AI</span></p>
+    <h1 class="wordmark">TAHIR<span>BOT</span></h1>
+    <p id="gline" class="gline"><span id="g1"></span><span id="g2"></span><b class="caret"></b></p>
+    <div class="chips">
+      <span class="chip"><b id="gvisits">1</b> visit</span>
+      <span class="chip"><b id="ggaali">0</b> lifetime gaali</span>
+      <span class="chip" id="gchip">2000+ roasts</span>
+    </div>
+    <button id="start" type="button">
+      <span class="lbl" id="gcta">GAALI KHANE AA JA</span>
+      <span class="arw">&#10148;</span>
+    </button>
+    <button id="softstart" type="button">&#128524; <span id="gsoft">nahi bhai, chill mode se shuru karo</span></button>
+    <p class="fine" id="gfine">headphones on. parents ko mat dikhana. &#128128;</p>
+  </div>
+</div>
 
 <div class="app">
   <header>
@@ -57,6 +115,12 @@
   <button onclick="reveal.classList.remove('on')">chal theek hai</button>
 </div>
 
-<script src="app.js"></script>
+<!-- order matters: app.js declares the globals, motion.js wraps them,
+     gate.js is last because pressing start calls into both. -->
+<script src="js/app.js"></script>     <!-- the brain: rules, replies, chat -->
+<script src="js/motion.js"></script>     <!-- feedback + transitions -->
+<script src="js/chatkit.js"></script>    <!-- chips, reactions, milestones, unread -->
+<script src="js/gate-lines.js"></script> <!-- welcome/poke/badge text banks -->
+<script src="js/gate.js"></script>       <!-- the welcome gate -->
 </body>
 </html>

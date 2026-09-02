@@ -1,0 +1,300 @@
+  /* ═══════════════════════════════════════════════════════════════════════
+     WELCOME GATE — 3D & Hyperrealism + Glassmorphism, dark-only.
+     Tokens straight out of design-system/tahir-bot/MASTER.md.
+     ═══════════════════════════════════════════════════════════════════════ */
+  :root{
+    --bg:#0F0F23; --fg:#E2E8F0; --card:#1E1C35; --muted-fg:#94A3B8;
+    --primary:#7C3AED; --secondary:#A78BFA; --accent:#F43F5E; --line:#4C1D95;
+    --glass:rgba(255,255,255,.06); --glass-line:rgba(255,255,255,.14); --blur:15px;
+    --display:"Russo One","Segoe UI",Impact,sans-serif;
+    --body:"Chakra Petch","Segoe UI",Roboto,sans-serif;
+  }
+
+  #gate{position:fixed;inset:0;z-index:60;display:grid;grid-template-rows:1fr auto;
+        gap:clamp(4px,2vh,18px);padding:max(18px,env(safe-area-inset-top)) 18px
+        max(18px,env(safe-area-inset-bottom));background:
+        radial-gradient(120% 80% at 50% 0%,#241a4d 0%,rgba(15,15,35,0) 62%),
+        radial-gradient(90% 60% at 50% 108%,#3b0f2a 0%,rgba(15,15,35,0) 60%),
+        #0F0F23;
+        font-family:var(--body);overflow:hidden;
+        animation:gateIn .5s cubic-bezier(.2,.9,.3,1) both}
+  @keyframes gateIn{from{opacity:0}to{opacity:1}}
+  /* leaving: the whole sheet lunges at the camera and blurs out */
+  #gate.off{animation:gateOut .62s cubic-bezier(.6,0,.9,.4) both;pointer-events:none}
+  @keyframes gateOut{to{opacity:0;transform:scale(1.35);filter:blur(14px)}}
+  body.started #gate{display:none}
+
+  /* ---- ambience behind the rig ---- */
+  .gfx{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+  .gfx u{position:absolute;display:block}
+  .halo{width:min(78vw,420px);aspect-ratio:1;top:26%;left:50%;translate:-50% -50%;border-radius:50%;
+        background:conic-gradient(from 0deg,var(--primary),var(--accent),var(--secondary),var(--primary));
+        filter:blur(70px);opacity:.42;animation:spin 18s linear infinite}
+  .scan{inset:0;opacity:.28;mix-blend-mode:overlay;
+        background:repeating-linear-gradient(180deg,rgba(167,139,250,.16) 0 1px,transparent 1px 4px)}
+  /* one running horizon grid, so the model reads as standing on something */
+  .floor{left:-20%;right:-20%;top:64%;height:52vh;opacity:.5;
+         -webkit-mask-image:linear-gradient(180deg,#000,transparent);
+         mask-image:linear-gradient(180deg,#000,transparent);
+         background-image:linear-gradient(90deg,rgba(167,139,250,.5) 1px,transparent 1px),
+                          linear-gradient(180deg,rgba(167,139,250,.5) 1px,transparent 1px);
+         background-size:38px 38px;transform:perspective(340px) rotateX(74deg);
+         animation:floorRun 3.4s linear infinite}
+  @keyframes floorRun{to{background-position:0 38px,0 38px}}
+
+  /* ---- the rig: real CSS-3D, tilted live from pointer / gyro ---- */
+  #stage{position:relative;display:grid;place-items:center;min-height:0;
+         perspective:820px;perspective-origin:50% 45%}
+  #rig{--rx:0deg;--ry:0deg;--rigsize:min(62vw,240px);--coresize:calc(var(--rigsize) * .38);
+       width:var(--rigsize);aspect-ratio:1;position:relative;transform-style:preserve-3d;
+       transform:rotateX(var(--rx)) rotateY(var(--ry));
+       transition:transform .5s cubic-bezier(.2,.9,.3,1);animation:bob 6s ease-in-out infinite}
+  @keyframes bob{50%{translate:0 -14px}}
+
+  /* wireframe cage — 12 longitude circles + 3 latitude bands, one spinning group */
+  .cage{position:absolute;inset:-9%;transform-style:preserve-3d;animation:spinY 16s linear infinite}
+  @keyframes spinY{to{transform:rotateY(360deg)}}
+  .cage i{position:absolute;inset:0;border:1px solid rgba(167,139,250,.34);border-radius:50%;
+          box-shadow:0 0 14px rgba(124,58,237,.28) inset}
+  .cage i:nth-child(1){transform:rotateY(0deg)}    .cage i:nth-child(2){transform:rotateY(15deg)}
+  .cage i:nth-child(3){transform:rotateY(30deg)}   .cage i:nth-child(4){transform:rotateY(45deg)}
+  .cage i:nth-child(5){transform:rotateY(60deg)}   .cage i:nth-child(6){transform:rotateY(75deg)}
+  .cage i:nth-child(7){transform:rotateY(90deg)}   .cage i:nth-child(8){transform:rotateY(105deg)}
+  .cage i:nth-child(9){transform:rotateY(120deg)}  .cage i:nth-child(10){transform:rotateY(135deg)}
+  .cage i:nth-child(11){transform:rotateY(150deg)} .cage i:nth-child(12){transform:rotateY(165deg)}
+  .cage i.lat{border-color:rgba(244,63,94,.4)}
+  .cage i.lat.a{transform:rotateX(90deg) scale(.98)}
+  .cage i.lat.b{transform:rotateX(90deg) translateZ(38px) scale(.78)}
+  .cage i.lat.c{transform:rotateX(90deg) translateZ(-38px) scale(.78)}
+
+  /* three satellites on tilted orbits — the bit that sells the depth */
+  .orbit{position:absolute;inset:-22%;border-radius:50%;transform-style:preserve-3d;
+         border:1px dashed rgba(226,232,240,.13)}
+  .orbit s{position:absolute;top:-5px;left:50%;width:10px;height:10px;margin-left:-5px;
+           border-radius:50%;background:var(--secondary);text-decoration:none;
+           box-shadow:0 0 12px 3px var(--primary)}
+  /* each orbit keeps its own tilt inside its own keyframes, so the satellite really
+     travels around the sphere - it passes BEHIND the bust on the far half of the loop
+     instead of sliding flat across the front. that pass-behind is the depth cue. */
+  .o1{transform:rotateX(72deg);animation:orb1 7s linear infinite}
+  .o2{transform:rotateX(72deg) rotateY(60deg);animation:orb2 11s linear infinite}
+  .o2 s{background:var(--accent);box-shadow:0 0 12px 3px var(--accent)}
+  .o3{transform:rotateX(108deg) rotateY(120deg);animation:orb3 15s linear infinite}
+  @keyframes orb1{to{transform:rotateX(72deg) rotateZ(360deg)}}
+  @keyframes orb2{to{transform:rotateX(72deg) rotateY(60deg) rotateZ(-360deg)}}
+  @keyframes orb3{to{transform:rotateX(108deg) rotateY(120deg) rotateZ(360deg)}}
+
+  /* ── Tahir rides the sphere ────────────────────────────────────────────────
+     #track spins around Y. He sits out on the surface at --r, so the spin
+     carries him all the way round - front, edge, and genuinely BEHIND the cage,
+     because preserve-3d depth-sorts him against the rings.
+     He counter-rotates by exactly the same angle over exactly the same duration,
+     which is the billboard trick: he travels the circle but never turns away
+     from you. The two loops share one duration var so they cannot drift apart. */
+  #rig{--spin:15s;--r:calc(var(--rigsize) * .52)}
+  #track{position:absolute;inset:0;transform-style:preserve-3d;
+         animation:track var(--spin) linear infinite}
+  @keyframes track{
+    from{transform:rotateX(-10deg) rotateY(0deg)}
+    to{transform:rotateX(-10deg) rotateY(360deg)}}
+
+  #core{position:absolute;top:50%;left:50%;
+        width:var(--coresize);height:var(--coresize);
+        margin:calc(var(--coresize) / -2) 0 0 calc(var(--coresize) / -2);
+        padding:0;border:0;border-radius:50%;cursor:pointer;background:transparent;
+        overflow:hidden;transform-style:preserve-3d;
+        box-shadow:0 0 0 2px rgba(167,139,250,.65),0 0 34px 6px rgba(124,58,237,.6),
+                   0 18px 34px -12px #000;
+        animation:ride var(--spin) linear infinite}
+  /* far side of the loop: smaller, dimmer, cooler. that IS the depth. */
+  @keyframes ride{
+    0%  {transform:translateZ(var(--r)) rotateY(0deg) scale(1);
+         filter:none;opacity:1}
+    25% {filter:brightness(.8) saturate(.9)}
+    50% {transform:translateZ(var(--r)) rotateY(-180deg) scale(.72);
+         filter:brightness(.42) saturate(.6) blur(.6px);opacity:.85}
+    75% {filter:brightness(.8) saturate(.9)}
+    100%{transform:translateZ(var(--r)) rotateY(-360deg) scale(1);
+         filter:none;opacity:1}}
+
+  /* poke him and the whole ride freezes while he glitches - much better feedback
+     than a hover state you can never actually land on a moving target. */
+  #rig.held #track,#rig.held #core{animation-play-state:paused}
+  #core:focus-visible{outline:3px solid var(--accent);outline-offset:6px}
+  #core img{width:100%;height:100%;object-fit:cover;display:block;
+            filter:contrast(1.12) saturate(1.15)}
+  /* a comet tail so you can read which way he is travelling */
+  #core::after{content:"";position:absolute;inset:0;border-radius:50%;
+               box-shadow:0 0 26px 8px rgba(167,139,250,.45);pointer-events:none}
+  #core .sheen{position:absolute;inset:0;pointer-events:none;
+               background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.42) 50%,transparent 62%);
+               translate:-120% 0;animation:sheen 4.4s ease-in-out infinite}
+  @keyframes sheen{0%,62%{translate:-120% 0}86%,100%{translate:120% 0}}
+  #core .lines{position:absolute;inset:0;pointer-events:none;opacity:.5;
+               background:repeating-linear-gradient(180deg,rgba(15,15,35,.5) 0 1px,transparent 1px 3px),
+                          linear-gradient(180deg,transparent 44%,rgba(167,139,250,.5) 50%,transparent 56%);
+               background-size:100% 3px,100% 220%;animation:crawl 3.6s linear infinite}
+  @keyframes crawl{to{background-position:0 0,0 220%}}
+  #core.poked img{animation:glitch .42s steps(2,end) 2}
+  @keyframes glitch{
+    0%{filter:none;translate:0}
+    25%{filter:hue-rotate(90deg) saturate(3);translate:-5px 2px}
+    50%{filter:invert(1);translate:5px -2px}
+    75%{filter:hue-rotate(-60deg);translate:-3px 0}
+    100%{filter:none;translate:0}}
+
+  /* a glowing heart in the middle of the cage, so the sphere is not hollow */
+  .heart{position:absolute;top:50%;left:50%;width:34%;height:34%;translate:-50% -50%;
+         border-radius:50%;pointer-events:none;
+         background:radial-gradient(circle at 40% 35%,rgba(255,255,255,.85),
+                    var(--secondary) 32%,var(--primary) 60%,rgba(124,58,237,0) 72%);
+         filter:blur(2px);animation:heart 3.2s ease-in-out infinite}
+  @keyframes heart{50%{scale:1.16;opacity:.8}}
+
+  /* contact shadow, so he is standing and not floating in a void */
+  .cast{position:absolute;left:50%;bottom:-16%;width:70%;height:22px;translate:-50% 0;
+        background:radial-gradient(50% 50%,rgba(124,58,237,.6),transparent 70%);
+        filter:blur(6px);transform:rotateX(80deg);animation:castPulse 6s ease-in-out infinite}
+  @keyframes castPulse{50%{width:56%;opacity:.6}}
+
+  #poke{position:absolute;bottom:2%;left:50%;translate:-50% 0;max-width:88%;text-align:center;
+        font-size:13px;color:var(--secondary);opacity:0;transition:opacity .25s;pointer-events:none;
+        text-shadow:0 2px 10px #000}
+  #poke.on{opacity:1;animation:pokePop .3s cubic-bezier(.2,.9,.3,1.5) both}
+  @keyframes pokePop{from{translate:-50% 12px;scale:.9}to{translate:-50% 0;scale:1}}
+
+  /* ---- copy + CTA ---- */
+  .gcopy{position:relative;text-align:center;display:grid;gap:clamp(7px,1.4vh,13px);
+         justify-items:center;width:100%;max-width:460px;margin:0 auto;
+         animation:riseUp .7s cubic-bezier(.2,.9,.3,1) .12s both}
+  @keyframes riseUp{from{opacity:0;translate:0 26px}to{opacity:1;translate:0 0}}
+
+  .eyebrow{display:flex;align-items:center;gap:7px;font-size:10.5px;letter-spacing:.16em;
+           font-weight:600;color:var(--accent);text-transform:uppercase;
+           padding:5px 12px;border-radius:999px;
+           background:var(--glass);border:1px solid rgba(244,63,94,.35);
+           -webkit-backdrop-filter:blur(var(--blur));backdrop-filter:blur(var(--blur))}
+  .eyebrow b{width:7px;height:7px;border-radius:50%;background:var(--accent);
+             box-shadow:0 0 8px 2px var(--accent);animation:blip 1.3s ease-in-out infinite}
+  @keyframes blip{50%{opacity:.25}}
+
+  .wordmark{font-family:var(--display);font-size:clamp(38px,13vw,64px);line-height:.9;
+            letter-spacing:.02em;color:#fff;text-transform:uppercase;
+            text-shadow:0 0 26px rgba(124,58,237,.75),0 6px 0 rgba(76,29,149,.5)}
+  .wordmark span{background:linear-gradient(92deg,var(--accent),var(--secondary));
+                 -webkit-background-clip:text;background-clip:text;color:transparent;
+                 filter:drop-shadow(0 0 18px rgba(244,63,94,.6))}
+
+  .gline{min-height:3.4em;font-size:clamp(14px,3.7vw,16px);line-height:1.45;color:var(--fg);
+         max-width:38ch;text-wrap:balance;font-weight:500}
+  #g2{color:var(--accent);font-weight:700}
+  .caret{display:inline-block;width:9px;height:1.05em;translate:0 .18em;background:var(--secondary);
+         animation:blink .9s steps(2,end) infinite}
+  .caret.done{display:none}
+  @keyframes blink{50%{opacity:0}}
+
+  .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+  .chip{font-size:11px;color:var(--muted-fg);padding:4px 10px;border-radius:999px;
+        white-space:nowrap;background:var(--glass);border:1px solid var(--glass-line);
+        -webkit-backdrop-filter:blur(var(--blur));backdrop-filter:blur(var(--blur))}
+  .chip b{color:var(--secondary);font-weight:700}
+
+  #start{position:relative;width:min(100%,340px);margin-top:4px;padding:16px 22px;border:0;
+         border-radius:16px;cursor:pointer;overflow:hidden;font-family:var(--display);
+         font-size:clamp(14px,4vw,17px);letter-spacing:.08em;color:#fff;
+         display:flex;align-items:center;justify-content:center;gap:12px;min-height:56px;
+         background:linear-gradient(135deg,var(--primary),var(--accent));
+         box-shadow:0 14px 34px -10px rgba(244,63,94,.65),0 0 0 1px rgba(255,255,255,.14) inset;
+         transition:transform .18s cubic-bezier(.2,.9,.3,1.4),box-shadow .18s;
+         animation:ctaBreathe 2.6s ease-in-out infinite}
+  @keyframes ctaBreathe{50%{box-shadow:0 18px 44px -8px rgba(244,63,94,.9),
+                                   0 0 0 1px rgba(255,255,255,.22) inset}}
+  #start::after{content:"";position:absolute;inset:0;
+                background:linear-gradient(110deg,transparent 40%,rgba(255,255,255,.45) 50%,transparent 60%);
+                translate:-130% 0;animation:sheen 3s ease-in-out .6s infinite}
+  #start:hover{transform:translateY(-3px) scale(1.02)}
+  #start:active{transform:translateY(1px) scale(.98)}
+  #start:focus-visible{outline:3px solid #fff;outline-offset:3px}
+  #start .arw{transition:translate .18s}
+  #start:hover .arw{translate:5px 0}
+
+  #softstart{background:transparent;border:1px solid var(--line);color:var(--muted-fg);
+             font-family:var(--body);font-size:12.5px;padding:9px 16px;border-radius:999px;
+             width:auto;height:auto;cursor:pointer;transition:color .2s,border-color .2s}
+  #softstart:hover{color:var(--secondary);border-color:var(--secondary)}
+  #softstart:focus-visible{outline:2px solid var(--secondary);outline-offset:3px}
+  .fine{font-size:10.5px;color:#5c5a70;letter-spacing:.04em}
+
+  /* ── responsive ────────────────────────────────────────────────────────────
+     One number drives the whole rig (--rigsize); the cage, the orbit radius and
+     Tahir himself are all derived from it, so each breakpoint sets exactly one
+     value instead of re-tuning five. Checked at 375 / 768 / 1024 / 1440. */
+
+  /* small phones (375px class) - the gate must fit with no scroll */
+  @media(max-width:420px){
+    #gate{padding:max(12px,env(safe-area-inset-top)) 14px max(12px,env(safe-area-inset-bottom));
+          gap:6px}
+    #rig{--rigsize:min(56vw,190px)}
+    .wordmark{font-size:clamp(34px,12vw,46px)}
+    .gline{font-size:14px;min-height:3em;max-width:32ch}
+    .eyebrow{font-size:9.5px;letter-spacing:.1em;padding:4px 10px}
+    .chip{font-size:10.5px;padding:3px 8px}
+    #start{padding:14px 18px;min-height:52px;border-radius:14px}
+    .fine{font-size:9.5px}
+  }
+  /* very narrow (320px class) - one chip row is more important than three chips */
+  @media(max-width:340px){
+    #rig{--rigsize:min(54vw,158px)}
+    .chips .chip:nth-child(3){display:none}
+    .floor{display:none}
+  }
+
+  /* short viewports: the CTA must never leave the fold, so the rig yields first */
+  @media(max-height:700px){ #rig{--rigsize:min(34vh,196px)} }
+  @media(max-height:620px){
+    #rig{--rigsize:min(30vh,164px)}
+    .wordmark{font-size:clamp(30px,9vw,42px)}
+    .gline{min-height:2.8em}
+    .fine,.floor{display:none}
+  }
+  @media(max-height:520px){
+    #rig{--rigsize:min(26vh,130px)}
+    .gline{min-height:2.4em;font-size:13px}
+    .chips{display:none}
+  }
+  /* phone on its side - no vertical room at all, drop the shrine entirely */
+  @media(max-height:430px){
+    #stage{display:none}
+    #gate{grid-template-rows:auto;place-content:center}
+    .wordmark{font-size:34px}
+  }
+
+  /* tablets and up (768px+) - the shrine gets the room it deserves */
+  @media(min-width:768px) and (min-height:720px){
+    #rig{--rigsize:min(38vw,300px)}
+    .gline{font-size:17px;max-width:42ch}
+  }
+  @media(min-width:1024px) and (min-height:800px){
+    #rig{--rigsize:340px}
+    .wordmark{font-size:72px}
+    .gcopy{max-width:520px}
+  }
+  @media(min-width:1440px) and (min-height:900px){
+    #rig{--rigsize:400px}
+    .wordmark{font-size:84px}
+  }
+
+  /* coarse pointers cannot hover, so the tap targets carry the affordance */
+  @media(hover:none){
+    #core{cursor:default}
+    #start:hover{transform:none}
+  }
+
+  /* the gate is decoration on top of a working chat — strip it flat when asked */
+  @media(prefers-reduced-motion:reduce){
+    #gate,#gate.off,.gcopy{animation:none}
+    .cage,.orbit,.halo,.floor,#core .sheen,#core .lines,.cast,#start,#start::after,
+    #rig,.eyebrow b{animation:none !important}
+    #rig{transition:none}
+    #gate.off{opacity:0}
+  }

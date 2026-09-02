@@ -8,7 +8,7 @@ const HINDI = /\b(kya|kyu|kyun|hai|hain|tu|tum|tera|teri|tere|mera|meri|bhai|bha
 // the {3,} before the ending is what keeps "omega"/"bodega" out.
 const HINDI_SUF = /\b\w{3,}(ega|egi|enge|oge|unga|ungi|wala|wali|ayga|ayega|karna|karne|jana|dena|lena)\b/i;
 const HI_GAALI = /bhadw|bhosd|chinal|randi|lavd|lawd|lod[ae]|lund|gaand|gandu|chutiy|chut|chod|\bmc\b|\bbc\b|\bmkc\b|harami|kutt|kamin|saal[ae]|jhaat|jhant|tatti|nalayak|ullu|gadh[ae]|bewakoof|chomu|tharki|chapri|gawar|nikamma|besharam|bakchod|chirkut|tondu|dhakkan|pagal|bsdk|bkl|lkc|tmkc|bhenchod|behenchod|madarchod|mader|chotiy|chootiy|bhadv|bhosad|bhos|laud|lawad|lode|lodu|haramkhor|kutiy|kuttiy|gaandoo|gandoo|chutya|chutiap|chutiyap|jhatu|jhaatu|tati|bakch|nalaik|bewkuf|gadhe|\bgand\b|\bulu\b|chuchi|chuchey|tatte|\bgote\b|\bmuth\b|muthal|chusna|chodna|hilana/i;
-const EN_GAALI = /f+u+c+k|fck|fu+k+|ph+u*c*k|a+s+hole|\bass\b|\basshole\b|bitch|bastard|\bdick\b|dickhead|\bprick\b|twat|wanker|slut|shit|crap|piss|damn|moron|dumb|idiot|stupid|loser|bloody|clown|trash|creep|freak|\bpenis\b|\bcock\b|\bballs\b|\bnuts\b|\banus\b|\banal\b|\bbutt\b|\bbum\b|\bboob\b|\bboobs\b|\btits\b|nipple|\bvagina\b|\bpussy\b|\bhorny\b|\bsex|\bporn\b|pornhub|onlyfans|only fans|nsfw|condom|masturbat|jerk off|blowjob|\bcum\b|orgasm|\bnude\b|naked|dildo|\bboner\b|erect|hump|randy|\brape\b|rapist/i;
+const EN_GAALI = /f+u+c+k|fck|fu+k+|ph+u*c*k|a+s+hole|\bass\b|\basshole\b|bitch|bastard|\bdick\b|dickhead|\bprick\b|twat|wanker|slut|shit|crap|piss|damn|moron|dumb|idiot|stupid|loser|bloody|clown|trash|creep|freak|\bpenis\b|\bcock\b|\bballs\b|\bnuts\b|\banus\b|\banal\b|\bbutt\b|\bbum\b|\bboob\b|\bboobs\b|\btits\b|nipple|\bvagina\b|\bpussy\b|\bhorny\b|\bsex|porn|pornhub|onlyfans|only fans|nsfw|condom|masturbat|jerk off|blowjob|\bcum\b|orgasm|nude|naked|dildo|\bboner\b|erect|hump|randy|\brape\b|rapist|\bxxx\b|hentai|\bmilf\b|camgirl|sexting|thirst trap|\bsimp\b|\bthot\b/i;
 const ANY_GAALI = new RegExp(HI_GAALI.source + "|" + EN_GAALI.source, "i");
 
 // ponytail: f*ck, ch#tiya, g@ndu, sh1t, bh@dwe. two cheap passes, no fuzzy-match library.
@@ -24,7 +24,8 @@ const CENSORED = /[*#@$%^&!0-9]/;
 const GAALI_WORDS = ["bhadwa","bhosdike","chinal","randi","lavda","lund","gaand","gandu","chutiya",
   "chut","chodu","bsdk","bkl","lkc","bhenchod","madarchod","harami","kutta","kamina","jhaatu","tatti","bewakoof","chapri","tharki","bakchod",
   "fuck","asshole","bitch","bastard","shit","dick","dickhead","prick","stupid","idiot","loser","dumb",
-  "penis","cock","boobs","boob","tits","vagina","pussy","anus","anal","boner"];
+  "penis","cock","boobs","boob","tits","vagina","pussy","anus","anal","boner",
+  "porn","horny","onlyfans","hentai","nude"];
 const SKELS = GAALI_WORDS.map(w => [skel(w), w]);
 
 // ponytail: pass 3 for plain misspellings - haraami, gaandoo, chuttiya, bhaadwe.
@@ -1135,6 +1136,64 @@ const tierOf = t => TIER_RE.reduce((n, re, i) => re.test(t) ? i : n, -1);
 const vocative = (rage, utier) =>
   pick(TIERS[Math.min(2, Math.max(rage >= 10 ? 2 : rage >= 3 ? 1 : 0, utier + 1))]);
 
+// ═══════════════════════════════════════════════════════════════════════════
+// TIER 15+ : the search-history bank.
+// ponytail: unlocked only once the counter passes 15, so it stays a genuine
+// escalation and not a thing he says on turn one. Every line here roasts the
+// USER - his history, his subs, his 3am habits. The names are only ever the
+// punchline he gets caught with; nothing here describes the performers.
+// chillMode never reaches this, same as MEGA and SAVAGE.
+// ═══════════════════════════════════════════════════════════════════════════
+const PSTARS = ["mia khalifa","riley reid","lana rhoades","johnny sins","abella danger",
+  "eva elfie","angela white","sunny leone","brandi love","asa akira","kendra lust",
+  "lisa ann","adriana chechik","valentina nappi","gabbie carter","autumn falls"];
+const pstar = () => PSTARS[Math.floor(Math.random() * PSTARS.length)];
+
+// "%" is swapped for a name. keep every line pointed at HIM.
+const PSTAR_HI = [
+  "teri search history mein % ke alawa kuch hai bhi? 💀",
+  "bhai tera incognito tab % se bhara pada hai, mereko sab pata hai 😂",
+  "% ka subscriber hai tu, aur mereko gaali de raha hai? 🤡",
+  "raat ke 3 baje % dhundne wala aadmi mereko roast kar raha hai 😭",
+  "tera recommended feed % dikhata hai aur tu khud ko sharif bolta hai 💀",
+  "% ki playlist banayi hai tune, padhai ki nahi. wahi problem hai 😂",
+  "data pack khatam hota hai tera % pe, phir bolta hai recharge mehenga hai 🤡",
+  "mummy ne phone check kiya to % nikla. yaad hai na wo din? 💀",
+  "tu % dekhta hai aur sochta hai tu ladki patayega? sapne dekh 😂",
+  "teri watch later list mein % hai, life goals mein kuch nahi 💀",
+  "% ke video pe comment karta hai tu, ladki ko message nahi kar pata 😭",
+  "bhai tera phone gallery mat kholna kabhi, % ka poora archive hai 🤡",
+  "google ko tera naam nahi pata, par % ke saath tera rishta pata hai 😂",
+  "tu % ke naam se folder banata hai aur khud ko chhupa hua samajhta hai 💀",
+  "wifi ka bill % ki wajah se aata hai tera, padhai ki wajah se nahi 😭"
+];
+const PSTAR_EN = [
+  "your search history is 90% % and 10% regret 💀",
+  "bro your incognito tab is just % on repeat, I can see it 😂",
+  "you subscribe to % and you are roasting ME? 🤡",
+  "a man who googles % at 3am is trying to insult me 😭",
+  "your recommended feed is % and you still call yourself decent 💀",
+  "you made a playlist for %, not for studying. that is the whole problem 😂",
+  "your data runs out on %, then you cry about recharge prices 🤡",
+  "mom checked your phone and found %. we both remember that day 💀",
+  "you watch % and think you are pulling anyone? dream on 😂",
+  "your watch-later has %. your life goals have nothing 💀",
+  "you comment on % videos but cannot text a real person 😭",
+  "never open your gallery in public bro, it is a full % archive 🤡",
+  "google does not know your name but it knows you and % very well 😂",
+  "you keep a folder named after % and think you are being subtle 💀",
+  "your wifi bill exists because of %, not because of homework 😭"
+];
+// short version - gets appended onto any reply once he is this far gone
+const PSTAR_TAG_HI = ["% wale 💀", "search history khol 😂", "% ka fan 🤡",
+  "incognito wale bhai 💀", "% dekh ke aaya hai na 😂"];
+const PSTAR_TAG_EN = ["% guy 💀", "check your history 😂", "% fan 🤡",
+  "incognito warrior 💀", "fresh out of % 😂"];
+
+const PSTAR_AT = 15;                       // the counter he has to cross to unlock it
+const pstarLine = hi => pick(hi ? PSTAR_HI : PSTAR_EN).replace("%", pstar());
+const pstarTag  = hi => pick(hi ? PSTAR_TAG_HI : PSTAR_TAG_EN).replace("%", pstar());
+
 function human(t, rage, utier){
   rage = rage || 0;
   if (utier === undefined) utier = -1;
@@ -1154,6 +1213,11 @@ function human(t, rage, utier){
       if (t.includes(v)) continue;                       // no "chutiye ... chutiye"
       t = Math.random() < .35 ? v + " " + t : t + " " + v;
     }
+  }
+  // past 15 the same jab starts leaking into ordinary replies too, not just gaalis
+  if (!chillMode && rage >= PSTAR_AT && Math.random() < .18){
+    const tag = pstarTag(lastHi);
+    if (!t.includes(tag)) t = t + " " + tag;
   }
   if (Math.random() < ROT_RATE){                     // ambient brainrot on top of any reply
     const r = pick(ROT);
@@ -1326,6 +1390,8 @@ function reply(text, rage){
   // rage banks only when the message IS just a gaali, else they steamroll the actual topic
   // chill mode drops straight to bait - no rage-tier escalation, ever.
   if (gaali && words <= 3){
+    // past 15 he stops arguing and just reads your browser history out loud
+    if (!chillMode && rage >= PSTAR_AT && Math.random() < .35) return pstarLine(hi);
     if (!chillMode && rage >= 10 && Math.random() < .30) return pick(hi ? MEGA_HI : MEGA_EN);
     if (!chillMode && rage >= 3  && Math.random() < .25) return pick(hi ? SAVAGE_HI : SAVAGE_EN);
     if (Math.random() < .25) return pick(hi ? BAIT_HI : BAIT_EN);   // bait works at every level
@@ -1492,9 +1558,12 @@ function bubble(text, who, hit){
 }
 
 // ponytail: delay scales with length. instant replies are what expose a bot.
-const dur = t => 600 + Math.min(t.length * 45, 1600);
+const dur = t => 600 + Math.min(String(t == null ? "" : t).length * 45, 1600);
 
 function say(text, after){
+  // ponytail: a reply bank that came back empty used to throw inside dur() and leave
+  // the header stuck on "typing..." forever. never let him have nothing to say.
+  if (text == null || text === "") text = pick(lastHi ? FB_HI : FB_EN);
   setTimeout(() => {
     status.textContent = "typing...";
     const dots = document.createElement("div");
@@ -1545,12 +1614,21 @@ f.onsubmit = e => {
     const now = Date.now();
     if (now - lastRageAt >= RAGE_COOLDOWN_MS){
       lastRageAt = now;
-      count.textContent = ++rage;
-      count.classList.toggle("hot", rage >= 3);
-      document.body.classList.toggle("mad", rage >= 6);   // header, red blob and emoji rain
-      document.body.style.setProperty("--rage", Math.min(rage, 25));
-      shockwave();
-      count.style.animation = "none"; void count.offsetWidth; count.style.animation = "pulse .5s";
+      rage++;
+      // ponytail: every line in here is decoration - a counter, a class, a ring.
+      // it used to run bare, and because it sits BEFORE say(), one throw in any of
+      // it (a missing node, a blocked style write) swallowed the whole reply and he
+      // went silent for the rest of the chat. rage itself is bumped above, outside
+      // the guard, so the escalation stays correct even if the paint fails.
+      try {
+        count.textContent = rage;
+        count.classList.toggle("hot", rage >= 3);
+        document.body.classList.toggle("mad", rage >= 6);   // header, red blob and emoji rain
+        document.body.style.setProperty("--rage", Math.min(rage, 25));
+        shockwave();
+        count.style.animation = "none"; void count.offsetWidth;
+        count.style.animation = "roll .45s cubic-bezier(.18,1.4,.4,1)";
+      } catch (err){ console.error("rage paint failed, reply continues:", err); }
     }
   }
 
@@ -1693,7 +1771,9 @@ const topTopic = () => {
 };
 MEM.visits = (MEM.visits || 0) + 1;
 remember();
-say(human(
+// ponytail: he no longer greets on load - the welcome gate holds this until the
+// user actually presses start, so the first line lands on a chat they are looking at.
+const bootGreet = () => say(human(
   MEM.name && MEM.visits > 1
     ? "wapas aa gaya " + MEM.name + "? pichli baar " + (MEM.gaalis || 0) + " gaali di thi tune" +
       (topTopic() ? " aur " + topTopic() + " pe atka hua tha 😂" : " 😂")
