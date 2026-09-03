@@ -1358,6 +1358,8 @@ const BACK_EN = ["you said bye? and here you are 😂", "did not leave? I knew i
 
 // ponytail: rules are SCORED, not first-match. a topic rule outranks a gaali rule so
 // "sutta pila de bhosdike" answers the sutta instead of throwing the topic away.
+// ponytail: index.html?debug turns the MISS log back on for a roast-writing session.
+const DEBUG = location.search.includes("debug");
 const TOPIC_FROM = RULES.findIndex(r => r[0].source.includes("sutta"));
 const FOLLOWUP = /^(aur|or|phir|fir|kyu|kyun|kyo|to|toh|matlab|acha|achha|sach|so|then|why|and|really)\s*\??$/i;
 let lastRule = -1;
@@ -1405,10 +1407,12 @@ function reply(text, rage){
     if (sc > score){ score = sc; best = i; }
   });
   if (best < 0 && lastRule >= 0 && FOLLOWUP.test(text)) best = lastRule;   // "aur?" stays on the last topic
-  // ponytail: every fallback is a rule you have not written yet. open devtools after a
-  // real session with friends and the list tells you exactly which topics to add next.
+  // ponytail: every fallback is a rule you have not written yet. the list tells you
+  // exactly which topics to add next - open index.html?debug and it logs them again.
+  // it used to log unconditionally, which meant the live site printed every message a
+  // visitor typed straight into their console. an authoring aid, not a shipped feature.
   if (best < 0){
-    console.log("MISS:", text);
+    if (DEBUG) console.log("MISS:", text);
     const e = Math.random() < .6 ? echo(text, hi) : "";   // throw his own word back at him
     return e || pick(hi ? FB_HI : FB_EN);
   }

@@ -127,6 +127,17 @@ const TIERS_UI = [
     }
   };
 
+  // ponytail: rage goes back to 0 on a reset, but `shown` kept its high-water mark -
+  // so after one reset the banners never fired again for the rest of the session. wrap
+  // resetAll the same way motion.js wraps bubble(): one hook, no call site to keep in sync.
+  const _reset = window.resetAll;
+  if (typeof _reset === "function") window.resetAll = function(){
+    const out = _reset.apply(this, arguments);       // the real reset happens first, always
+    try { shown = -1; unread = 0; jn.textContent = ""; sync(); }
+    catch (e){ console.error("milestone reset failed:", e); }
+    return out;
+  };
+
   // ── jump to latest, with an unread count ──────────────────────────────────
   const jump = document.createElement("button");
   jump.className = "jump";

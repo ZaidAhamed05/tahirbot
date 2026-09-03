@@ -16,14 +16,30 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-# The css/ and js/ files are safe to cache hard: the service worker versions them
-# (CACHE = "tahir-bot-vN") and drops the old cache on activate.
+# css/ and js/ used to sit on a 7-day hard cache, on the theory that the service
+# worker versioned them. It cannot: with no build step the filenames never change,
+# so a returning visitor kept serving app.js out of their own HTTP cache for a week
+# and a pushed fix simply did not arrive. must-revalidate costs a 304 with no body
+# on every unchanged file, and the service worker still paints instantly from Cache
+# Storage — so this buys same-day deploys for effectively nothing.
 [[headers]]
   for = "/css/*"
   [headers.values]
-    Cache-Control = "public, max-age=604800"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
   for = "/js/*"
   [headers.values]
-    Cache-Control = "public, max-age=604800"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# The photo and the icons are the only heavy files left and they almost never change,
+# so they keep a real cache — a day, not a week, so swapping the photo still lands.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
