@@ -15,7 +15,11 @@ const SHELL = ["./", "./index.html", "./manifest.json",
                "./js/app.js", "./js/motion.js", "./js/chatkit.js", "./js/gate-lines.js", "./js/gate.js",
                "./js/intro.js",
                "./assets/tahir-og.jpeg",
-               "./icons/icon-192.png", "./icons/icon-512.png"];
+               "./icons/icon-192.png"];
+// ponytail: icon-512 is deliberately NOT precached. At 238KB it was 39% of everything a
+// first-time visitor downloaded, and it is only ever used at the moment someone installs
+// the app to their home screen - a casual visitor pays for a file they never see. The
+// fetch handler below still caches it on demand, so installing offline-after-once works.
 
 self.addEventListener("install", e => {
   // ponytail: one missing file used to reject addAll() and abort the whole install,
