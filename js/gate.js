@@ -69,34 +69,120 @@
       if (i >= text.length){ clearInterval(typer); done && done(); }
     }, speed);
   }
-  type(g1, line[0], 26, () => setTimeout(() => {            // the pause IS the punchline
-    type(g2, " " + line[1], 22, () => caret.classList.add("done"));
-  }, 620));
+  // ponytail: the boot intro (intro.js) covers this shrine while it plays and #gate
+  // stays display:none behind it - so the typewriter holds here and starts the moment
+  // the overlay lifts. if that script never runs, the timer below cuts it loose:
+  // a dead splash must never lock the gate shut.
+  const startTyping = () => {
+    type(g1, line[0], 26, () => setTimeout(() => {            // the pause IS the punchline
+      type(g2, " " + line[1], 22, () => caret.classList.add("done"));
+    }, 620));
+    // focus was attempted while the gate was display:none (a no-op) - grab it again
+    setTimeout(() => { try { document.getElementById("start").focus({ preventScroll: true }); } catch (e) {} }, 150);
+  };
+  if (document.body.classList.contains("intro")){
+    const iv = setInterval(() => {
+      if (!document.body.classList.contains("intro")){ clearInterval(iv); startTyping(); }
+    }, 100);
+    // fail open: only fires when intro.js itself never ran - the full word bank
+    // takes ~11s at a readable pace, so this sits well past that.
+    setTimeout(() => {
+      if (!document.body.classList.contains("intro")) return;
+      clearInterval(iv);
+      const ov = document.getElementById("intro"); if (ov) ov.remove();
+      document.body.classList.remove("intro");
+      startTyping();
+    }, 15000);
+  } else {
+    startTyping();
+  }
 
   // ---- parallax: the rig leans toward wherever you are ------------------------
   // ponytail: writing two CSS vars is a compositor-only change, so this stays at
   // 60fps on a phone. rAF-throttled so a fast swipe cannot queue up a hundred writes.
-  let pending = false, tx = 0, ty = 0;
+  let raf = 0, tx = 0, ty = 0;
   const lean = () => {
-    pending = false;
     rig.style.setProperty("--ry", tx.toFixed(2) + "deg");
     rig.style.setProperty("--rx", ty.toFixed(2) + "deg");
   };
+
+  // ---- the background talks back ---------------------------------------------
+  // the floating emojis scatter when the cursor gets close, and the cursor itself
+  // leaves a tiny fading spark as it crosses the shrine. each emoji is two layers
+  // - drift animation on the <b> glyph, scatter on the <i> wrapper - so the push
+  // can never fight the drift. measured lazily: the gate is display:none behind
+  // the intro at load, where getBoundingClientRect reads all zeroes.
+  let mx = -9999, my = -9999, lastSpark = 0;
+  const toons = [...gate.querySelectorAll(".toons i")].map(el => ({ el, x: 0, y: 0 }));
+  let tReady = !toons.length;
+  const measure = () => {
+    const box = [];
+    for (const t of toons){
+      const r = t.el.getBoundingClientRect();
+      if (!r.width && !r.height) return;             // gate still hidden - try again later
+      box.push(r);
+    }
+    for (let i = 0; i < toons.length; i++){
+      toons[i].x = box[i].left + box[i].width / 2;
+      toons[i].y = box[i].top + box[i].height / 2;
+    }
+    tReady = true;
+  };
+  const scatter = () => {
+    if (SOFT) return;
+    if (!tReady) measure();
+    if (!tReady) return;
+    for (const t of toons){
+      const dx = t.x - mx, dy = t.y - my;
+      const d = Math.hypot(dx, dy);
+      // d under ~18px = the cursor is ON the emoji, so hover gets to own it
+      const push = d > 18 && d < 160 ? (1 - d / 160) * 32 : 0;
+      t.el.style.transform = push
+        ? "translate3d(" + (dx / d * push).toFixed(1) + "px," + (dy / d * push).toFixed(1) + "px,0)"
+        : "";
+    }
+  };
+  const spark = () => {
+    if (SOFT || mx < 0) return;
+    const now = performance.now();
+    if (now - lastSpark < 70) return;                // a slow trail, not confetti
+    lastSpark = now;
+    const s = document.createElement("i");
+    s.className = "speck";
+    const r = 2 + Math.random() * 5;
+    s.style.left = (mx + Math.random() * 16 - 8) + "px";
+    s.style.top  = (my + Math.random() * 16 - 8) + "px";
+    s.style.width = s.style.height = r.toFixed(1) + "px";
+    s.style.background = Math.random() < .5 ? "rgba(167,139,250,.9)" : "rgba(244,63,94,.85)";
+    s.onanimationend = () => s.remove();
+    gate.append(s);
+  };
+  const frame = () => { raf = 0; lean(); scatter(); spark(); };
+  const queue = () => { if (!raf) raf = requestAnimationFrame(frame); };
   const aim = (x, y) => {
     if (SOFT) return;
     tx = (x / innerWidth - .5) * 44;                 // left/right -> yaw
     ty = (.5 - y / innerHeight) * 26;                // up/down    -> pitch
-    if (!pending){ pending = true; requestAnimationFrame(lean); }
+    queue();
   };
-  gate.addEventListener("pointermove", e => aim(e.clientX, e.clientY));
-  gate.addEventListener("pointerleave", () => { tx = ty = 0; if (!pending){ pending = true; requestAnimationFrame(lean); } });
+  addEventListener("resize", () => { tReady = false; });
+  gate.addEventListener("pointermove", e => {
+    mx = e.clientX; my = e.clientY;
+    aim(e.clientX, e.clientY);
+  });
+  gate.addEventListener("pointerleave", () => {
+    tx = ty = 0; mx = my = -9999;
+    for (const t of toons) t.el.style.transform = "";
+    queue();
+  });
   // phone tilt, where the browser hands it over without a permission prompt
   addEventListener("deviceorientation", e => {
     if (SOFT || e.gamma == null) return;
     tx = Math.max(-30, Math.min(30, e.gamma));
     ty = Math.max(-20, Math.min(20, (e.beta || 0) - 40));
-    if (!pending){ pending = true; requestAnimationFrame(lean); }
+    queue();
   });
+
 
   // ---- poke his face ----------------------------------------------------------
   let pokeTimer;
@@ -123,12 +209,31 @@
     bleep(chill ? 300 : 130, .5, chill ? "sine" : "sawtooth", .09);
     buzz(chill ? 20 : [18, 40, 24]);
     gate.classList.add("off");
-    setTimeout(() => {
+    const reveal = () => {
       document.body.classList.add("started");
       bootGreet();                                   // the real chat greeting, held until now
       if (innerHeight > 620) box.focus({ preventScroll: true });
       if (!chill) shockwave();                       // same ring a gaali fires. sets the tone.
-    }, SOFT ? 0 : 560);
+    };
+    // ponytail: reduced motion and the ?test self-check swap straight over - only
+    // a real visitor gets the full stage change.
+    if (SOFT || location.search.includes("test")){ reveal(); return; }
+    // a stage curtain slams across the shrine, then pulls away to reveal the chat
+    // mid-entrance: reveal() fires while the curtain is fully closed, so the panel
+    // rise, the face pop and the beam sweep all play as the curtain parts.
+    const c = document.createElement("div");
+    c.className = "curtain";
+    c.setAttribute("aria-hidden", "true");
+    document.body.append(c);
+    setTimeout(reveal, 220);                         // chat starts rising behind the curtain
+    setTimeout(() => c.classList.add("part"), 330); // curtain pulls away over the rise
+    if (!chill) setTimeout(() => {                   // a white blink as it parts
+      const fl = document.createElement("div");
+      fl.className = "flash";
+      fl.onanimationend = () => fl.remove();
+      document.body.append(fl);
+    }, 360);
+    setTimeout(() => { try { c.remove(); } catch (e) {} }, 880);
   }
 
   document.getElementById("start").onclick = () => start(false);

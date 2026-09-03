@@ -1,9 +1,10 @@
 // ponytail: this is the whole PWA offline story for a single-file app - cache the
 // shell on install, serve it from cache first so it still opens with no signal.
-const CACHE = "tahir-bot-v3";
+const CACHE = "tahir-bot-v4";
 const SHELL = ["./", "./index.html", "./manifest.json",
                "./css/style.css", "./css/gate.css", "./css/motion.css", "./css/chatkit.css",
                "./js/app.js", "./js/motion.js", "./js/chatkit.js", "./js/gate-lines.js", "./js/gate.js",
+               "./js/intro.js",
                "./icons/icon-192.png", "./icons/icon-512.png"];
 
 self.addEventListener("install", e => {

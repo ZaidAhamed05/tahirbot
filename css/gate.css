@@ -41,6 +41,102 @@
          background-size:38px 38px;transform:perspective(340px) rotateX(74deg);
          animation:floorRun 3.4s linear infinite}
   @keyframes floorRun{to{background-position:0 38px,0 38px}}
+  /* fun in the shrine's air - this screen is a party, not a void. drifting
+     emoji bob along the edges, glints twinkle behind the rig, embers rise off
+     the floor. each one is bright enough to read at a glance but sits in the
+     top band / side margins so it never fights the copy. invisible until
+     animated, which is what keeps them gone under prefers-reduced-motion. */
+  .toons{inset:0}
+  .toons i{position:absolute;display:block;line-height:1;opacity:.45;cursor:default;
+           pointer-events:auto;will-change:transform;
+           transition:transform .45s cubic-bezier(.2,.9,.3,1),filter .3s;
+           filter:drop-shadow(0 0 10px rgba(124,58,237,.5))}
+  .toons i b{display:block;line-height:1}
+  /* hover an emoji and it stops drifting to stare back - grows, glow warms */
+  .toons i:hover{transform:scale(1.3);
+                 filter:drop-shadow(0 0 14px rgba(244,63,94,.95)) drop-shadow(0 0 30px rgba(124,58,237,.8))}
+  .toons i:hover b{animation-play-state:paused}
+  /* five floaters, dialled back to read as ambience not confetti: 🖕 spins in
+     place, 💀 climbs and sinks, 🔥 drifts up, 😂 wanders a lazy loop, 🚬 spins
+     the other way. paths live on the <b> glyph, scatter lives on the <i>
+     wrapper - the two layers never fight over transform. */
+  .toons i:nth-child(1){left:2%;top:6%;font-size:32px}
+  .toons i:nth-child(1) b{animation:toonSpin 12s linear infinite}
+  .toons i:nth-child(2){left:92%;top:10%;font-size:26px}
+  .toons i:nth-child(2) b{animation:toonRise 8s ease-in-out -2s infinite alternate}
+  .toons i:nth-child(3){left:6%;top:40%;font-size:21px;opacity:.38}
+  .toons i:nth-child(3) b{animation:toonRise 10s ease-in-out -4s infinite alternate}
+  .toons i:nth-child(4){left:90%;top:45%;font-size:19px;opacity:.38}
+  .toons i:nth-child(4) b{animation:toonLoop 14s ease-in-out -1s infinite}
+  .toons i:nth-child(5){left:-1%;top:22%;font-size:17px;opacity:.32}
+  .toons i:nth-child(5) b{animation:toonSpinR 16s linear -6s infinite}
+  @keyframes toonSpin{
+    0%{transform:translateY(0) rotate(0)}
+    25%{transform:translateY(-6px) rotate(90deg)}
+    50%{transform:translateY(-1px) rotate(180deg)}
+    75%{transform:translateY(5px) rotate(270deg)}
+    100%{transform:translateY(0) rotate(360deg)}}
+  @keyframes toonSpinR{
+    0%{transform:translateY(3px) rotate(0)}
+    25%{transform:translateY(-5px) rotate(-90deg)}
+    50%{transform:translateY(-1px) rotate(-180deg)}
+    75%{transform:translateY(5px) rotate(-270deg)}
+    100%{transform:translateY(3px) rotate(-360deg)}}
+  @keyframes toonRise{
+    0%{transform:translateY(0) rotate(-8deg)}
+    100%{transform:translateY(-26px) rotate(8deg)}}
+  @keyframes toonLoop{
+    0%{transform:translate(0,0) rotate(0)}
+    25%{transform:translate(18px,-14px) rotate(14deg)}
+    50%{transform:translate(0,-24px) rotate(-6deg)}
+    75%{transform:translate(-14px,-10px) rotate(-12deg)}
+    100%{transform:translate(0,0) rotate(0)}}
+  /* the cursor leaves a tiny fading spark behind it as it crosses the shrine */
+  .speck{position:absolute;border-radius:50%;pointer-events:none;opacity:0;
+         box-shadow:0 0 8px 1px rgba(167,139,250,.55);
+         animation:speckFade .7s ease-out forwards}
+  @keyframes speckFade{0%{opacity:.85;transform:translateY(0) scale(1)}
+                       100%{opacity:0;transform:translateY(-18px) scale(.35)}}
+  .glints{inset:0;opacity:0;
+          box-shadow:
+            7vw 14vh 0 2px rgba(255,255,255,.95),24vw 70vh 0 3px rgba(167,139,250,1),
+            31vw 30vh 0 2px rgba(255,255,255,.85),47vw 86vh 0 2px rgba(244,63,94,.85),
+            54vw 42vh 0 3px rgba(255,255,255,.9),66vw 8vh 0 2px rgba(167,139,250,.95),
+            72vw 60vh 0 2px rgba(255,255,255,.75),84vw 24vh 0 3px rgba(244,63,94,.85),
+            91vw 76vh 0 2px rgba(255,255,255,.9),16vw 92vh 0 2px rgba(167,139,250,.95),
+            38vw 52vh 0 2px rgba(255,255,255,.7),59vw 96vh 0 3px rgba(244,63,94,.75),
+            69vw 33vh 0 2px rgba(255,255,255,.8),95vw 58vh 0 2px rgba(167,139,250,.85);
+          animation:glintDrift 9s ease-in-out infinite,
+                    glintTw 4.2s ease-in-out infinite}
+  @keyframes glintDrift{50%{transform:translateY(-3vh)}}
+  @keyframes glintTw{0%,100%{opacity:0}30%{opacity:.85}60%{opacity:.4}}
+  .embers{left:0;right:0;bottom:0;height:80vh}
+  .embers i{position:absolute;bottom:-16px;width:7px;height:7px;border-radius:50%;opacity:0;
+            background:radial-gradient(circle,#fff 20%,#a78bfa 60%,rgba(124,58,237,0) 78%);
+            box-shadow:0 0 14px 2px rgba(167,139,250,.75);
+            animation:emUp linear infinite,emSwayA ease-in-out infinite}
+  .embers i:nth-child(even){animation-name:emUp,emSwayB}
+  .embers i:nth-child(1){left:10%;animation-duration:16s,7s;animation-delay:-3s,-3s}
+  .embers i:nth-child(2){left:26%;width:5px;height:5px;animation-duration:21s,9s;animation-delay:-9s,-9s}
+  .embers i:nth-child(3){left:44%;width:11px;height:11px;animation-duration:14s,6s;animation-delay:-1s,-1s}
+  .embers i:nth-child(4){left:60%;width:5px;height:5px;animation-duration:19s,8s;animation-delay:-7s,-7s}
+  .embers i:nth-child(5){left:75%;width:9px;height:9px;animation-duration:24s,10s;animation-delay:-14s,-14s}
+  .embers i:nth-child(6){left:88%;width:5px;height:5px;animation-duration:17s,7s;animation-delay:-5s,-5s}
+  @keyframes emUp{
+    0%{transform:translateY(0);opacity:0}
+    8%{opacity:.85}
+    80%{opacity:.55}
+    100%{transform:translateY(-70vh);opacity:0}}
+  @keyframes emSwayA{50%{margin-left:26px}}
+  @keyframes emSwayB{50%{margin-left:-28px}}
+  /* tiny screens: keep just two emoji in the top corners so nothing crowds the copy */
+  @media(max-width:520px){
+    .toons i:nth-child(n+3){display:none}
+    .toons i:nth-child(1){top:1%;font-size:30px;left:1%}
+    .toons i:nth-child(2){top:2%;font-size:24px}
+    .embers{height:60vh}
+    .embers i:nth-child(3),.embers i:nth-child(5){display:none}
+  }
 
   /* ---- the rig: real CSS-3D, tilted live from pointer / gyro ---- */
   #stage{position:relative;display:grid;place-items:center;min-height:0;

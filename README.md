@@ -40,7 +40,8 @@ A savage Hinglish roast chatbot — swear at him and watch the rage climb. No AI
 │   ├── motion.js           # Feedback wiring (wraps say/bubble/shockwave)
 │   ├── chatkit.js          # Chips, reactions, rage milestones, jump-to-latest
 │   ├── gate-lines.js       # Gate text banks (data only, no DOM)
-│   └── gate.js             # Gate behaviour: orbit, parallax, start
+│   ├── gate.js             # Gate behaviour: orbit, parallax, start
+│   └── intro.js            # Boot intro: word-slam + middle finger splash
 │
 ├── icons/
 │   ├── icon-192.png

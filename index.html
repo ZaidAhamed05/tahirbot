@@ -19,7 +19,14 @@
 <link rel="stylesheet" href="css/motion.css">  <!-- motion tokens, reactive bg, transitions -->
 <link rel="stylesheet" href="css/chatkit.css"> <!-- starter chips, reactions, milestones -->
 </head>
-<body>
+<body class="intro">
+<!-- BOOT INTRO — the pre-gate word-slam: adjectives slam in one at a time and a
+     middle finger signs off before the shrine reveals (js/intro.js drives it).
+     inert until that script runs; if it never runs, gate.js cuts it loose. -->
+<div id="intro" aria-hidden="true">
+  <div class="istage"><span class="iword" aria-hidden="true"></span></div>
+  <p class="ihint" aria-hidden="true">tap anywhere to skip</p>
+</div>
 <!-- ponytail: one FIXED layer covers the whole screen AND shows through the panel,
      because .app is semi-transparent. no second copy inside the chat. -->
 <div class="bg" aria-hidden="true">
@@ -33,12 +40,21 @@
 <div class="vig" aria-hidden="true"></div>
 <div class="bubbles" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div>
 <div class="rain" aria-hidden="true"><span>🖕</span><span>💀</span><span>😂</span><span>🚬</span><span>😈</span><span>🔥</span><span>🤌</span><span>👀</span></div>
+<!-- the chat side of the floating cast: behind the glass panel, dodges the cursor -->
+<div class="toons toonsbg" aria-hidden="true"><i><b>&#128405;</b></i><i><b>&#128128;</b></i><i><b>&#128293;</b></i><i><b>&#128514;</b></i><i><b>&#128684;</b></i></div>
 
 <!-- ================= WELCOME GATE — the 3D Tahir shrine ================= -->
 <!-- ponytail: this whole screen is ONE overlay. it never unmounts the chat behind it,
      so pressing start is a pure opacity/transform swap - no re-render, no flash. -->
 <div id="gate">
-  <div class="gfx" aria-hidden="true"><u class="halo"></u><u class="scan"></u><u class="floor"></u></div>
+  <div class="gfx" aria-hidden="true">
+    <u class="halo"></u>
+    <u class="toons"><i><b>&#128405;</b></i><i><b>&#128128;</b></i><i><b>&#128293;</b></i><i><b>&#128514;</b></i><i><b>&#128684;</b></i></u>
+    <u class="glints"></u>
+    <u class="embers"><i></i><i></i><i></i><i></i><i></i><i></i></u>
+    <u class="scan"></u>
+    <u class="floor"></u>
+  </div>
 
   <!-- the "4D" rig: a real CSS-3D wireframe cage that spins around a floating bust,
        tilted live by mouse / gyro. no library, no WebGL, works offline. -->
@@ -108,6 +124,8 @@
     <input id="box" placeholder="Type something..." autofocus>
     <button>&#10148;</button>
   </form>
+  <!-- a light beam that sweeps down the whole column the moment the chat opens -->
+  <i class="door" aria-hidden="true"></i>
 </div>
 
 <div id="pic"><img id="picimg" alt="Tahir"><small>tap anywhere or press ESC to close</small></div>
@@ -127,5 +145,6 @@
 <script src="js/chatkit.js"></script>    <!-- chips, reactions, milestones, unread -->
 <script src="js/gate-lines.js"></script> <!-- welcome/poke/badge text banks -->
 <script src="js/gate.js"></script>       <!-- the welcome gate -->
+<script src="js/intro.js"></script>      <!-- boot intro: word-slam + middle finger -->
 </body>
 </html>
