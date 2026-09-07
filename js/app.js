@@ -1737,7 +1737,12 @@ savecard.onclick = () => {
     ctx.arc(c.width / 2, 230, 130, 0, Math.PI * 2);
     ctx.closePath();
     ctx.clip();
-    ctx.drawImage(img, c.width / 2 - 130, 100, 260, 260);
+    // ponytail: the photo is a 9:16 portrait, so forcing it into a 260x260 box
+    // squashed his face flat. scale to COVER the circle and crop instead - same
+    // framing the header avatar uses (object-fit:cover, object-position center 20%),
+    // so the tiny avatar and the saved card show the same crop of him.
+    const sh = 260 * img.naturalHeight / img.naturalWidth;
+    ctx.drawImage(img, c.width / 2 - 130, 100 - .2 * (sh - 260), 260, sh);
     ctx.restore();
     draw();
   };

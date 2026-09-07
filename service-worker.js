@@ -9,12 +9,12 @@
 //   · navigations  -> network first, cache only as the offline fallback
 //   · static files -> serve the cache instantly, refresh it in the background
 // a deploy lands on the next load without any version bump, and the app still opens offline.
-const CACHE = "tahir-bot-v5";
+const CACHE = "tahir-bot-v6";
 const SHELL = ["./", "./index.html", "./manifest.json",
                "./css/style.css", "./css/gate.css", "./css/motion.css", "./css/chatkit.css",
                "./js/app.js", "./js/motion.js", "./js/chatkit.js", "./js/gate-lines.js", "./js/gate.js",
                "./js/intro.js",
-               "./assets/tahir-og.jpeg",
+               "./assets/tahir-scorpion.jpeg",
                "./icons/icon-192.png"];
 // ponytail: icon-512 is deliberately NOT precached. At 238KB it was 39% of everything a
 // first-time visitor downloaded, and it is only ever used at the moment someone installs

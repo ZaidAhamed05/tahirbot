@@ -259,7 +259,11 @@
   input{transition:box-shadow .2s}
   input:focus{box-shadow:0 0 0 2px #6c3ce9}
 
-  #reveal{position:fixed;inset:0;background:rgba(5,5,9,.97);display:none;flex-direction:column;
+  /* ponytail: z-index is not optional here. .app is z-index:1, so a plain fixed overlay
+     with z-index:auto paints UNDERNEATH the chat - the roast card was showing as a ghost
+     behind the bubbles instead of covering them. 50 sits above the chat and the photo
+     zoom (20), below the gate (60) and the boot intro (90). */
+  #reveal{position:fixed;inset:0;z-index:50;background:#050509;display:none;flex-direction:column;
           align-items:center;justify-content:center;gap:16px;padding:28px;text-align:center}
   #reveal.on{display:flex;animation:fade .35s ease-out both}
   #reveal.on img{animation:zoom .5s .1s cubic-bezier(.2,.9,.3,1.2) both}
